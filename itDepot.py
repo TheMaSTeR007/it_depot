@@ -10,6 +10,12 @@ def req_sender(url: str, method: str):
         # Request Successful
         return _response
 
+def ensure_dir_exists(dir_path: str):
+    # Check if directory exists, if not, create it
+    if not os.path.exists(dir_path):
+        os.makedirs(dir_path)
+        print(f'Directory {dir_path} Created')  # Print confirmation of directory creation
+
 
 def page_checker(url: str, method: str, path: str) -> str:
     page_hash = hashlib.sha256(url.encode()).hexdigest()
@@ -47,7 +53,7 @@ def scraper_func(url: str, method: str, path_to_save_page: str):
     final_output = []
     for each_category_link in category_link_list:
         each_category_data = page_checker(url=each_category_link, method=method, 
-                                          path="C:/Users/jaimin.gurjar/PycharmProjects/pythonProject/26Jun24/it_depot/it_depot_category_pages")
+                                          path=os.path.join(project_files_dir, 'Categories_Pages'))
         xpath_page_count = '//li[last()-2]/a[ contains(@class, "category_page_class") ]/text()'
         parsed_category_page = html.fromstring(each_category_data)
         category_page_count = parsed_category_page.xpath(xpath_page_count)
@@ -82,6 +88,11 @@ def scraper_func(url: str, method: str, path_to_save_page: str):
 
 my_url = "https://www.theitdepot.com/"
 my_method = "GET"
-my_path = "C:/Users/jaimin.gurjar/PycharmProjects/pythonProject/26Jun24/it_depot"
 
-scraper_func(url=my_url, method=my_method, path_to_save_page=my_path)
+# Creating Saved Pages Directory for this Project if not Exists
+project_name = 'It_Depot'
+
+project_files_dir = f'C:\\Project Files\\{project_name}_Project_Files'
+ensure_dir_exists(dir_path=project_files_dir)
+
+scraper_func(url=my_url, method=my_method, path_to_save_page=os.path.join(project_files_dir, 'Main_Page'))
